@@ -64,7 +64,7 @@ function calculateChances(college, startDate) {
           (DATE_END_TIME - DATE_START_TIME) * percentThroughDay;
         date.setHours(
           Math.round(dayTime),
-          Math.round((dayTime % 1) * 5) * 15,
+          Math.round(((dayTime % 1) * 60) / 15) * 15,
           0,
           0
         );
