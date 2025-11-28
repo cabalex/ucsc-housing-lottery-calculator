@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UCSC Housing Lottery Calculator</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+      rel="stylesheet"
+    />
+    <meta
+      name="description"
+      content="Will YOU get on-campus housing this year?!"
+    />
+    <meta property="og:title" content="UCSC Housing Lottery Calculator" />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:description"
+      content="Will YOU get on-campus housing this year?!"
+    />
+    <meta
+      name="keywords"
+      content="UCSC, UCSC housing, housing, lottery, housing lottery, calculator"
+    />
+  </head>
+  <body>
+    <main id="initial">
+      <h1>Will YOU get on-campus housing this year?!</h1>
+      <p>Use this <i>totally scientific</i> calculator (gambler) to see!</p>
+      <div class="input-group">
+        <label for="college">Select your college affiliation:</label>
+        <select id="college" onchange="onChange()">
+          <option></option>
+          <option value="c9">College Nine</option>
+          <option value="cowell">Cowell College</option>
+          <option value="crown">Crown College</option>
+          <option value="jrl">John R. Lewis College</option>
+          <option value="kresge">Kresge College</option>
+          <option value="merrill">Merrill College</option>
+          <option value="oakes">Oakes College</option>
+          <option value="porter">Porter College</option>
+          <option value="rcc">Rachel Carson College</option>
+          <option value="stevenson">Stevenson</option>
+          <option value="utc">University Town Center</option>
+          <option value="village">The Village</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label for="start-date">First day of the lottery:</label>
+        <input
+          type="date"
+          id="start-date"
+          name="start-date"
+          onchange="onChange()"
+        />
+      </div>
+      <i style="font-size: 0.8em">
+        Calculator assumes you currently live on-campus and are applying for your own college. It does not take groups into account.
+      </i>
+      <button id="calculate" disable onclick="start()">Apply!</button>
+    </main>
+    <main id="results" style="display: none">
+      <div id="time-slot">
+        <p>
+          Lottery runs from <span id="lottery-start">Unknown</span> -
+          <span id="lottery-end">Unknown</span>
+        </p>
+        <p>Your lottery time: <span id="lottery-time">Unknown</span></p>
+        <div id="outlook">Not good...</div>
+      </div>
+      <div id="ending">
+        Result:
+        <div id="result">REJECTED</div>
+      </div>
+      <div id="data-container">
+        <h2>The stats</h2>
+        <p id="data"></p>
+        <div class="btn-row">
+          <button id="share-btn" onclick="share()">Share my results</button>
+          <button onclick="reset()">Try again?</button>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <div>
+        <p>
+          Based on May 2024 data from a California Public Records Act request by
+          /u/lapishusky
+        </p>
+        <p>
+          Tool is for <strike>educational</strike> <i>fun</i> purposes only and
+          is not affiliated with UC Santa Cruz.
+        </p>
+        <p>
+          The housing lottery is affected by many external factors, such as
+          group sizes, room sizes, preferences, etc.
+        </p>
+      </div>
+      <a href="https://cabalex.github.io">cabalex.github.io</a>
+    </footer>
+    <!-- Scripts -->
+    <script src="housing.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
+    <script>
+      function check() {
+        if (
+          document.getElementById("college").value === "" ||
+          document.getElementById("start-date").value === ""
+        ) {
+          return false;
+        }
+        return true;
+      }
+      function onChange() {
+        if (check()) {
+          document.getElementById("calculate").disabled = false;
+        } else {
+          document.getElementById("calculate").disabled = true;
+        }
+      }
+      onChange();
+      document.getElementById("start-date").value = getNextHousingDate()
+        .toISOString()
+        .split("T")[0];
+      function reset() {
+        document.getElementById("initial").style.display = "flex";
+        document.getElementById("results").style.display = "none";
+      }
+      function start() {
+        if (!check()) return;
+        const college = document.getElementById("college").value;
+        const startDate = document.getElementById("start-date").value;
+        const result = calculateChances(college, startDate);
+
+        console.log(result);
+        document.getElementById("initial").style.display = "none";
+        document.getElementById("results").style.display = "flex";
+
+        // start animations
+        const startDiv = document.getElementById("lottery-start");
+        const endDiv = document.getElementById("lottery-end");
+
+        startDiv.innerText = result.fromTime.toLocaleString(undefined, {
+          month: "long",
+          day: "numeric",
+        });
+        endDiv.innerText = result.toTime.toLocaleString(undefined, {
+          month: "long",
+          day: "numeric",
+        });
+
+        const timeDiv = document.getElementById("lottery-time");
+        const outlookDiv = document.getElementById("outlook");
+        timeDiv.innerText = result.lotteryTime.toLocaleString(undefined, {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+        });
+        if (result.result <= 0.05) {
+          outlookDiv.innerText = "Easy.";
+        } else if (result.result <= 0.25) {
+          outlookDiv.innerText = "Seems promising...";
+        } else if (result.result <= 0.5) {
+          outlookDiv.innerText = "...it's probably a coin toss...";
+        } else if (result.result <= 0.75) {
+          outlookDiv.innerText = "Not looking good...";
+        } else {
+          outlookDiv.innerText = "Uh oh.";
+        }
+
+        const resultDiv = document.getElementById("result");
+        if (result.accepted) {
+          resultDiv.innerText = "ACCEPTED";
+          resultDiv.className = "accepted";
+          // Pass in the id of an element
+          setTimeout(
+            () =>
+              confetti({
+                particleCount: 200,
+                spread: 100,
+                origin: { y: 0.6 },
+              }),
+            1500
+          );
+        } else {
+          resultDiv.className = "rejected";
+          resultDiv.innerText = "REJECTED";
+        }
+
+        const data = document.getElementById("data");
+        data.innerHTML = `
+          You were one of <b>${
+            result.students
+          }</b> applying. Your college only had <b>${
+          result.beds
+        }</b> beds for you.<br/>
+          Your chance of acceptance was about <b>${(
+            result.chance * 100
+          ).toFixed(2)}%</b>.
+        `;
+
+        window.share = () => {
+          const shareBtn = document.getElementById("share-btn");
+          navigator.clipboard.writeText(
+            `I got ${
+              result.accepted ? "ACCEPTED" : "REJECTED"
+            } for UCSC housing! (Or at least, I pretended to.) Will you brave the housing lottery? ${
+              location.href
+            }`
+          ),
+            (shareBtn.innerText = "Copied! ✅");
+          shareBtn.style.border = "2px solid green";
+
+          setTimeout(() => {
+            shareBtn.style.border = "";
+            shareBtn.innerText = "Share my results";
+          }, 2000);
+        };
+      }
+    </script>
+  </body>
+</html>
