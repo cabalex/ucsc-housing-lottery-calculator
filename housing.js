@@ -45,6 +45,15 @@ function calculateChances(college, startDate) {
   if (!data) {
     throw new Error("College not found");
   }
+
+  if (college === "jrl" || college === "c9") {
+    // JRL and C9 housing stock are combined
+    data = {
+      students: DATA["jrl"].students + DATA["c9"].students,
+      beds: DATA["jrl"].beds + DATA["c9"].beds,
+    }
+  }
+
   const chance = data.beds / data.students;
   const result = Math.random();
   const accepted = result < chance;
