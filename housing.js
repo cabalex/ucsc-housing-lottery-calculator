@@ -41,7 +41,7 @@ function getNextHousingDate() {
 }
 
 function calculateChances(college, startDate) {
-  const data = DATA[college];
+  let data = DATA[college];
   if (!data) {
     throw new Error("College not found");
   }
@@ -51,7 +51,7 @@ function calculateChances(college, startDate) {
     data = {
       students: DATA["jrl"].students + DATA["c9"].students,
       beds: DATA["jrl"].beds + DATA["c9"].beds,
-    }
+    };
   }
 
   const chance = data.beds / data.students;
