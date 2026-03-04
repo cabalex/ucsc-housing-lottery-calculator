@@ -5,7 +5,7 @@ const DATA = {
   crown: { students: 538, beds: 325 },
   delaware: { students: 679, beds: 352 },
   jrl: { students: 501, beds: 47 },
-  kresge: { students: 462, beds: 104 },
+  kresge: { students: 462, beds: 254 },
   merrill: { students: 530, beds: 216 },
   oakes: { students: 495, beds: 298 },
   porter: { students: 619, beds: 180 },
