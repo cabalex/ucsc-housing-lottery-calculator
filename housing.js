@@ -1,17 +1,18 @@
 // May 2024 data
 const DATA = {
-  c9: { students: 459, beds: 209 },
-  cowell: { students: 410, beds: 245 },
-  crown: { students: 476, beds: 325 },
-  jrl: { students: 425, beds: 47 },
-  kresge: { students: 308, beds: 104 },
-  merrill: { students: 475, beds: 216 },
-  oakes: { students: 399, beds: 298 },
-  porter: { students: 499, beds: 180 },
-  rcc: { students: 443, beds: 314 },
-  stevenson: { students: 398, beds: 225 },
-  utc: { students: 91, beds: 55 },
-  village: { students: 176, beds: 135 },
+  c9: { students: 589, beds: 209 },
+  cowell: { students: 615, beds: 245 },
+  crown: { students: 538, beds: 325 },
+  delaware: { students: 679, beds: 352 },
+  jrl: { students: 501, beds: 47 },
+  kresge: { students: 462, beds: 104 },
+  merrill: { students: 530, beds: 216 },
+  oakes: { students: 495, beds: 298 },
+  porter: { students: 619, beds: 180 },
+  rcc: { students: 568, beds: 314 },
+  stevenson: { students: 625, beds: 225 },
+  utc: { students: 68, beds: 55 },
+  village: { students: 199, beds: 135 },
 };
 
 const DATE_START_TIME = 7.5; // 8:30 AM
